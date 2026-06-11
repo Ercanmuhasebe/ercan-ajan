@@ -4,6 +4,7 @@ const tasks = loadTasks();
 let nextTaskId = getNextTaskId();
 let currentFilter = "all";
 let editingTaskId = null;
+let currentAgentSuggestion = null;
 
 const countText = document.querySelector("#count");
 const messageText = document.querySelector("#message");
@@ -36,6 +37,18 @@ const askAiButton = document.querySelector("#askAiButton");
 const aiStatus = document.querySelector("#aiStatus");
 const aiAnswerBox = document.querySelector("#aiAnswerBox");
 const aiAnswer = document.querySelector("#aiAnswer");
+const createAgentPlanButton = document.querySelector(
+  "#createAgentPlanButton"
+);
+const addAgentSuggestionButton = document.querySelector(
+  "#addAgentSuggestionButton"
+);
+const agentStatus = document.querySelector("#agentStatus");
+const agentResult = document.querySelector("#agentResult");
+const agentObservation = document.querySelector("#agentObservation");
+const agentDecision = document.querySelector("#agentDecision");
+const agentPlan = document.querySelector("#agentPlan");
+const agentSuggestion = document.querySelector("#agentSuggestion");
 
 function showCount() {
   countText.textContent = count;
@@ -402,6 +415,120 @@ async function askArtificialIntelligence(event) {
   }
 }
 
+function buildLocalAgentPlan() {
+  const pendingTasks = tasks.filter(function (task) {
+    return !task.completed;
+  });
+  const completedTasks = tasks.filter(function (task) {
+    return task.completed;
+  });
+
+  if (tasks.length === 0) {
+    return {
+      observation: "Listede henuz gorev bulunmuyor.",
+      decision:
+        "Ajan, once somut bir hedef belirlenmesi gerektigine karar verdi.",
+      steps: [
+        "Yapmak istediginiz mobil uygulamayi tek cumleyle tanimlayin.",
+        "Uygulamanin cozecegi bir problemi yazin.",
+        "Ilk kucuk ozelligi gorev listesine ekleyin.",
+      ],
+      suggestion: "Ilk mobil uygulama fikrimi bir cumleyle yaz",
+    };
+  }
+
+  if (pendingTasks.length === 0) {
+    return {
+      observation:
+        `${tasks.length} gorevin tamami tamamlanmis durumda.`,
+      decision:
+        "Ajan, yeni bir ogrenme hedefi belirleme zamaninin geldigine " +
+        "karar verdi.",
+      steps: [
+        "Tamamlanan calismalari kisaca gozden gecirin.",
+        "Eksik hissettiginiz bir konuyu belirleyin.",
+        "Bu konu icin 25 dakikalik yeni bir gorev olusturun.",
+      ],
+      suggestion: "Yeni bir yazilim ogrenme hedefi belirle",
+    };
+  }
+
+  const focusTask = pendingTasks[0];
+  const workloadMessage =
+    pendingTasks.length >= 4
+      ? "Bekleyen gorev sayisi yuksek; dagilmamak icin ilk gorev secildi."
+      : "Ilk bekleyen gorev, sirayi korumak icin odak olarak secildi.";
+
+  return {
+    observation:
+      `${pendingTasks.length} bekleyen ve ${completedTasks.length} ` +
+      "tamamlanan gorev var.",
+    decision: `${workloadMessage} Odak: "${focusTask.text}".`,
+    steps: [
+      `"${focusTask.text}" gorevini acik ve kucuk bir parcaya ayirin.`,
+      "25 dakika boyunca yalnizca bu gorev uzerinde calisin.",
+      "Sonucu test edip gorevi tamamlandi olarak isaretleyin.",
+    ],
+    suggestion: `25 dakika odaklan: ${focusTask.text}`,
+  };
+}
+
+function showLocalAgentPlan() {
+  const plan = buildLocalAgentPlan();
+  currentAgentSuggestion = plan.suggestion;
+
+  agentObservation.textContent = plan.observation;
+  agentDecision.textContent = plan.decision;
+  agentSuggestion.textContent = plan.suggestion;
+  agentPlan.innerHTML = "";
+
+  plan.steps.forEach(function (step) {
+    const listItem = document.createElement("li");
+    listItem.textContent = step;
+    agentPlan.append(listItem);
+  });
+
+  agentResult.hidden = false;
+  addAgentSuggestionButton.disabled = false;
+  agentStatus.className = "api-status success";
+  agentStatus.textContent =
+    "Ajan plani hazir. Eylem ancak sizin onayinizla uygulanir.";
+}
+
+function addAgentSuggestionToTasks() {
+  if (currentAgentSuggestion === null) {
+    return;
+  }
+
+  const suggestionExists = tasks.some(function (task) {
+    return task.text.toLocaleLowerCase("tr-TR") ===
+      currentAgentSuggestion.toLocaleLowerCase("tr-TR");
+  });
+
+  if (suggestionExists) {
+    agentStatus.className = "api-status error";
+    agentStatus.textContent = "Bu oneri gorev listesinde zaten bulunuyor.";
+    addAgentSuggestionButton.disabled = true;
+    return;
+  }
+
+  tasks.push({
+    id: nextTaskId,
+    text: currentAgentSuggestion,
+    completed: false,
+  });
+  nextTaskId = nextTaskId + 1;
+  saveTasks();
+  currentFilter = "all";
+  renderTasks();
+
+  agentStatus.className = "api-status success";
+  agentStatus.textContent =
+    "Ajan onerisi kullanici onayiyla gorev listesine eklendi.";
+  currentAgentSuggestion = null;
+  addAgentSuggestionButton.disabled = true;
+}
+
 increaseButton.addEventListener("click", function () {
   count = count + 5;
   showCount();
@@ -474,5 +601,11 @@ aiQuestion.addEventListener("input", function () {
 });
 
 aiForm.addEventListener("submit", askArtificialIntelligence);
+
+createAgentPlanButton.addEventListener("click", showLocalAgentPlan);
+addAgentSuggestionButton.addEventListener(
+  "click",
+  addAgentSuggestionToTasks
+);
 
 renderTasks();

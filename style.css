@@ -345,6 +345,60 @@ button.secondary:hover {
   border-top: 1px solid #d8d2c7;
 }
 
+.agent-box {
+  margin-top: 28px;
+  padding-top: 28px;
+  border-top: 1px solid #d8d2c7;
+}
+
+.agent-badge {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #cfe7ef;
+  color: #24576b;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.agent-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.agent-result {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid #bfd7df;
+  border-radius: 18px;
+  background: #f3f9fb;
+}
+
+.agent-step {
+  padding: 14px;
+  border-radius: 14px;
+  background: white;
+}
+
+.agent-step > span {
+  color: #327087;
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.1em;
+}
+
+.agent-step p {
+  margin: 8px 0 0;
+  line-height: 1.6;
+}
+
+.agent-step ol {
+  margin: 8px 0 0;
+  padding-left: 22px;
+  line-height: 1.8;
+}
+
 .ai-box form > label {
   display: block;
   margin-bottom: 10px;
@@ -523,5 +577,9 @@ button:disabled {
   .ai-form-footer {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .agent-actions {
+    grid-template-columns: 1fr;
   }
 }

@@ -134,7 +134,7 @@
           <div>
             <dt>Ruzgar</dt>
             <dd id="weatherWind">-</dd>
-          </div>
+          </div>  
           <div>
             <dt>Veri zamani</dt>
             <dd id="weatherTime">-</dd>
@@ -179,8 +179,60 @@
         <p id="aiAnswer"></p>
       </article>
     </section>
+
+    <section class="agent-box">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">DERS 10</p>
+          <h2>Ucretsiz yerel ajan</h2>
+        </div>
+        <span class="agent-badge">OFFLINE</span>
+      </div>
+
+      <p class="api-intro">
+        Bu ajan gorevleri gozlemler, bir sonraki adimi secer ve size plan
+        onerir. Internet veya ucretli API kullanmaz.
+      </p>
+
+      <div class="agent-actions">
+        <button id="createAgentPlanButton" type="button">
+          Ajan plani hazirla
+        </button>
+        <button
+          id="addAgentSuggestionButton"
+          class="secondary"
+          type="button"
+          disabled
+        >
+          Oneriyi gorevlere ekle
+        </button>
+      </div>
+
+      <p id="agentStatus" class="api-status" aria-live="polite">
+        Ajanin gorev listenizi incelemesi icin dugmeye basin.
+      </p>
+
+      <article id="agentResult" class="agent-result" hidden>
+        <div class="agent-step">
+          <span>1. GOZLEM</span>
+          <p id="agentObservation"></p>
+        </div>
+        <div class="agent-step">
+          <span>2. KARAR</span>
+          <p id="agentDecision"></p>
+        </div>
+        <div class="agent-step">
+          <span>3. PLAN</span>
+          <ol id="agentPlan"></ol>
+        </div>
+        <div class="agent-step">
+          <span>4. ONERILEN EYLEM</span>
+          <p id="agentSuggestion"></p>
+        </div>
+      </article>
+    </section>
   </main>
 
-  <script src="app.js?v=9"></script>
+  <script src="app.js?v=10"></script>
 </body>
 </html>
