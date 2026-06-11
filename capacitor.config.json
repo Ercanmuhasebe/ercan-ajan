@@ -1,0 +1,10 @@
+{
+  "appId": "io.github.ercanmuhasebe.ercanajan",
+  "appName": "Ercan Ajan",
+  "webDir": "www",
+  "backgroundColor": "#f4f1ea",
+  "loggingBehavior": "debug",
+  "android": {
+    "backgroundColor": "#f4f1ea"
+  }
+}

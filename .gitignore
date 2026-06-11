@@ -10,3 +10,12 @@ Desktop.ini
 .env
 .env.*
 !.env.example
+
+# Node ve Capacitor tarafindan uretilen dosyalar
+node_modules/
+www/
+
+# Android imzalama anahtarlari gizli kalmalidir
+*.jks
+*.keystore
+android/key.properties

@@ -74,16 +74,27 @@ function isGitHubPagesHosting() {
   );
 }
 
+function isNativeApplication() {
+  return (
+    typeof window !== "undefined" &&
+    typeof window.Capacitor?.isNativePlatform === "function" &&
+    window.Capacitor.isNativePlatform()
+  );
+}
+
 function initializeHostingMode() {
-  if (!isGitHubPagesHosting()) {
+  const nativeApplication = isNativeApplication();
+
+  if (!isGitHubPagesHosting() && !nativeApplication) {
     return;
   }
 
   aiQuestion.disabled = true;
   askAiButton.disabled = true;
   aiStatus.className = "api-status";
-  aiStatus.textContent =
-    "OpenAI bolumu ucretsiz GitHub Pages yayininda kapali. Yerel ajan kullanilabilir.";
+  aiStatus.textContent = nativeApplication
+    ? "OpenAI bolumu bu Android paketinde sunucusuz calismaz. Yerel ajan kullanilabilir."
+    : "OpenAI bolumu ucretsiz GitHub Pages yayininda kapali. Yerel ajan kullanilabilir.";
 }
 
 function showCount() {
@@ -145,6 +156,14 @@ async function installApplication() {
 
 function initializePwa() {
   if (typeof window === "undefined") {
+    return;
+  }
+
+  if (isNativeApplication()) {
+    installAppButton.hidden = true;
+    networkStatus.textContent = "Android";
+    networkStatus.className = "network-status";
+    pwaStatus.textContent = "Uygulama Android paketi olarak calisiyor.";
     return;
   }
 
