@@ -142,8 +142,45 @@
         </dl>
       </div>
     </section>
+
+    <section class="ai-box">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">DERS 9</p>
+          <h2>Yapay zeka asistani</h2>
+        </div>
+        <span class="ai-badge">OPENAI</span>
+      </div>
+
+      <p class="api-intro">
+        Sorunuz guvenli yerel sunucuya, oradan OpenAI Responses API'ye gider.
+      </p>
+
+      <form id="aiForm">
+        <label for="aiQuestion">Yapay zekaya sorunuz</label>
+        <textarea
+          id="aiQuestion"
+          rows="4"
+          maxlength="1000"
+          placeholder="Ornek: JavaScript dizisini VBA ile karsilastir."
+        ></textarea>
+        <div class="ai-form-footer">
+          <span id="aiCharacterCount">0/1000</span>
+          <button id="askAiButton" type="submit">Yapay zekaya sor</button>
+        </div>
+      </form>
+
+      <p id="aiStatus" class="api-status" aria-live="polite">
+        Bir soru yazarak baslayin.
+      </p>
+
+      <article id="aiAnswerBox" class="ai-answer" hidden>
+        <p class="ai-answer-label">YAPAY ZEKA CEVABI</p>
+        <p id="aiAnswer"></p>
+      </article>
+    </section>
   </main>
 
-  <script src="app.js?v=8"></script>
+  <script src="app.js?v=9"></script>
 </body>
 </html>

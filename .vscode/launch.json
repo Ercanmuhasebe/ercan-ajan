@@ -2,10 +2,21 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Ders 1 uygulamasini ac",
-      "type": "msedge",
+      "name": "Ders 9 - AI sunucusunu baslat",
+      "type": "node",
       "request": "launch",
-      "file": "${workspaceFolder}/index.html"
+      "runtimeExecutable": "C:\\Users\\LENOVO\\Documents\\Codex\\tools\\node-v24.16.0-win-x64\\node.exe",
+      "program": "${workspaceFolder}/server.js",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PORT": "8787"
+      },
+      "console": "integratedTerminal",
+      "serverReadyAction": {
+        "pattern": "Sunucu hazir: (https?://\\S+)",
+        "uriFormat": "%s",
+        "action": "debugWithEdge"
+      }
     }
   ]
 }

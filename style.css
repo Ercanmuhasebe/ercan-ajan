@@ -89,7 +89,21 @@ input {
   font: inherit;
 }
 
-input:focus {
+textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 14px 16px;
+  resize: vertical;
+  border: 1px solid #b8b1a5;
+  border-radius: 14px;
+  background: white;
+  color: #18222c;
+  font: inherit;
+  line-height: 1.55;
+}
+
+input:focus,
+textarea:focus {
   border-color: #16705a;
   outline: 3px solid rgba(22, 112, 90, 0.16);
 }
@@ -325,6 +339,61 @@ button.secondary:hover {
   border-top: 1px solid #d8d2c7;
 }
 
+.ai-box {
+  margin-top: 28px;
+  padding-top: 28px;
+  border-top: 1px solid #d8d2c7;
+}
+
+.ai-box form > label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.ai-badge {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #ddd8f5;
+  color: #493f89;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.ai-form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.ai-form-footer span {
+  color: #737d86;
+  font-size: 0.8rem;
+}
+
+.ai-answer {
+  padding: 20px;
+  border: 1px solid #c9c3e8;
+  border-radius: 18px;
+  background: #f7f5ff;
+}
+
+.ai-answer-label {
+  margin: 0 0 10px;
+  color: #6355a8;
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+}
+
+.ai-answer #aiAnswer {
+  margin: 0;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
 .api-badge {
   padding: 8px 12px;
   border-radius: 999px;
@@ -449,5 +518,10 @@ button:disabled {
 
   .weather-details {
     grid-template-columns: 1fr;
+  }
+
+  .ai-form-footer {
+    align-items: stretch;
+    flex-direction: column;
   }
 }

@@ -5,3 +5,8 @@ Desktop.ini
 # Editör ve gecici dosyalar
 *.tmp
 *.bak
+
+# Gizli API anahtarlari
+.env
+.env.*
+!.env.example

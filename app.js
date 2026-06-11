@@ -29,6 +29,13 @@ const weatherFeelsLike = document.querySelector("#weatherFeelsLike");
 const weatherHumidity = document.querySelector("#weatherHumidity");
 const weatherWind = document.querySelector("#weatherWind");
 const weatherTime = document.querySelector("#weatherTime");
+const aiForm = document.querySelector("#aiForm");
+const aiQuestion = document.querySelector("#aiQuestion");
+const aiCharacterCount = document.querySelector("#aiCharacterCount");
+const askAiButton = document.querySelector("#askAiButton");
+const aiStatus = document.querySelector("#aiStatus");
+const aiAnswerBox = document.querySelector("#aiAnswerBox");
+const aiAnswer = document.querySelector("#aiAnswer");
 
 function showCount() {
   countText.textContent = count;
@@ -342,6 +349,59 @@ async function loadWeather() {
   }
 }
 
+async function askArtificialIntelligence(event) {
+  event.preventDefault();
+  const question = aiQuestion.value.trim();
+
+  if (
+    typeof window !== "undefined" &&
+    window.location.protocol === "file:"
+  ) {
+    aiStatus.className = "api-status error";
+    aiStatus.textContent =
+      "Uygulama dosya olarak acilmis. Edge'i kapatip VS Code'da F5'e basin.";
+    return;
+  }
+
+  if (question === "") {
+    aiStatus.className = "api-status error";
+    aiStatus.textContent = "Lutfen once bir soru yazin.";
+    aiQuestion.focus();
+    return;
+  }
+
+  askAiButton.disabled = true;
+  aiAnswerBox.hidden = true;
+  aiStatus.className = "api-status";
+  aiStatus.textContent = "Yapay zeka cevabi bekleniyor...";
+
+  try {
+    const response = await fetch("/api/assistant", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ question }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Yapay zeka istegi basarisiz oldu.");
+    }
+
+    aiAnswer.textContent = data.answer;
+    aiAnswerBox.hidden = false;
+    aiStatus.className = "api-status success";
+    aiStatus.textContent = `Cevap alindi. Model: ${data.model}`;
+  } catch (error) {
+    aiStatus.className = "api-status error";
+    aiStatus.textContent = error.message;
+  } finally {
+    askAiButton.disabled = false;
+  }
+}
+
 increaseButton.addEventListener("click", function () {
   count = count + 5;
   showCount();
@@ -408,5 +468,11 @@ completedTasksFilter.addEventListener("click", function () {
 });
 
 loadWeatherButton.addEventListener("click", loadWeather);
+
+aiQuestion.addEventListener("input", function () {
+  aiCharacterCount.textContent = `${aiQuestion.value.length}/1000`;
+});
+
+aiForm.addEventListener("submit", askArtificialIntelligence);
 
 renderTasks();
