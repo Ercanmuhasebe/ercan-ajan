@@ -1,0 +1,114 @@
+:root {
+  color-scheme: light;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #f4f1ea;
+  color: #18222c;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background:
+    radial-gradient(circle at top left, #d8e9e3, transparent 35%),
+    radial-gradient(circle at bottom right, #f1c9a5, transparent 35%),
+    #f4f1ea;
+}
+
+.card {
+  width: min(100%, 560px);
+  padding: 48px;
+  border: 1px solid rgba(24, 34, 44, 0.12);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 24px 70px rgba(31, 45, 56, 0.14);
+}
+
+.eyebrow {
+  margin: 0 0 12px;
+  color: #16705a;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2rem, 8vw, 3.4rem);
+  line-height: 1;
+}
+
+.intro {
+  margin: 22px 0 32px;
+  color: #53606c;
+  line-height: 1.7;
+}
+
+.counter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-radius: 18px;
+  background: #18222c;
+  color: white;
+}
+
+.counter strong {
+  font-size: 2.5rem;
+  color: #75d6bd;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+button {
+  min-height: 52px;
+  border: 0;
+  border-radius: 14px;
+  background: #d46831;
+  color: white;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #b95225;
+}
+
+button.secondary {
+  background: #e7e3db;
+  color: #18222c;
+}
+
+button.secondary:hover {
+  background: #d8d2c7;
+}
+
+.message {
+  min-height: 24px;
+  margin: 22px 0 0;
+  color: #16705a;
+  font-weight: 650;
+}
+
+@media (max-width: 520px) {
+  .card {
+    padding: 30px 24px;
+  }
+
+  .actions {
+    grid-template-columns: 1fr;
+  }
+}

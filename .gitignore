@@ -1,0 +1,7 @@
+# Windows tarafindan olusturulan gecici dosyalar
+Thumbs.db
+Desktop.ini
+
+# Editör ve gecici dosyalar
+*.tmp
+*.bak
