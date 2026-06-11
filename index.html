@@ -183,20 +183,44 @@
     <section class="agent-box">
       <div class="section-heading">
         <div>
-          <p class="section-kicker">DERS 11</p>
-          <h2>Hafizali yerel ajan</h2>
+          <p class="section-kicker">DERS 12</p>
+          <h2>Coklu yerel ajan ekibi</h2>
         </div>
         <span class="agent-badge">OFFLINE</span>
       </div>
 
       <p class="api-intro">
-        Bu ajan gorevleri gozlemler, bir sonraki adimi secer ve size plan
-        onerir. Internet veya ucretli API kullanmaz.
+        Planlayici, denetleyici ve uygulayici farkli sorumluluklarla birlikte
+        calisir. Internet veya ucretli API kullanmaz.
       </p>
+
+      <div class="agent-team">
+        <article class="agent-role planner">
+          <span>1</span>
+          <div>
+            <h3>Planlayici</h3>
+            <p>Gorevleri inceler ve bir calisma plani uretir.</p>
+          </div>
+        </article>
+        <article class="agent-role reviewer">
+          <span>2</span>
+          <div>
+            <h3>Denetleyici</h3>
+            <p>Plani tekrar, guvenlik ve uygulanabilirlik acisindan kontrol eder.</p>
+          </div>
+        </article>
+        <article class="agent-role executor">
+          <span>3</span>
+          <div>
+            <h3>Uygulayici</h3>
+            <p>Yalnizca denetleyici ve kullanici onayindan sonra eylem yapar.</p>
+          </div>
+        </article>
+      </div>
 
       <div class="agent-actions">
         <button id="createAgentPlanButton" type="button">
-          Ajan plani hazirla
+          Ajan ekibini calistir
         </button>
         <button
           id="addAgentSuggestionButton"
@@ -204,7 +228,7 @@
           type="button"
           disabled
         >
-          Oneriyi gorevlere ekle
+          Uygulayiciya onay ver
         </button>
       </div>
 
@@ -214,19 +238,24 @@
 
       <article id="agentResult" class="agent-result" hidden>
         <div class="agent-step">
-          <span>1. GOZLEM</span>
+          <span>PLANLAYICI - GOZLEM</span>
           <p id="agentObservation"></p>
         </div>
         <div class="agent-step">
-          <span>2. KARAR</span>
+          <span>PLANLAYICI - KARAR</span>
           <p id="agentDecision"></p>
         </div>
         <div class="agent-step">
-          <span>3. PLAN</span>
+          <span>PLANLAYICI - PLAN</span>
           <ol id="agentPlan"></ol>
         </div>
-        <div class="agent-step">
-          <span>4. ONERILEN EYLEM</span>
+        <div id="reviewerStep" class="agent-step reviewer-step">
+          <span>DENETLEYICI - INCELEME</span>
+          <p id="reviewerVerdict"></p>
+          <ul id="reviewerChecks"></ul>
+        </div>
+        <div class="agent-step executor-step">
+          <span>UYGULAYICI - ONERILEN EYLEM</span>
           <p id="agentSuggestion"></p>
         </div>
       </article>
@@ -253,6 +282,6 @@
     </section>
   </main>
 
-  <script src="app.js?v=11"></script>
+  <script src="app.js?v=12"></script>
 </body>
 </html>

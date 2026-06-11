@@ -366,6 +366,56 @@ button.secondary:hover {
   gap: 10px;
 }
 
+.agent-team {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.agent-role {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border: 1px solid #d4e1e6;
+  border-radius: 14px;
+  background: white;
+}
+
+.agent-role > span {
+  display: grid;
+  flex: 0 0 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 11px;
+  color: white;
+  font-weight: 850;
+}
+
+.agent-role.planner > span {
+  background: #327087;
+}
+
+.agent-role.reviewer > span {
+  background: #8a651f;
+}
+
+.agent-role.executor > span {
+  background: #16705a;
+}
+
+.agent-role h3 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.agent-role p {
+  margin: 4px 0 0;
+  color: #66717b;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
 .agent-result {
   display: grid;
   gap: 12px;
@@ -397,6 +447,28 @@ button.secondary:hover {
   margin: 8px 0 0;
   padding-left: 22px;
   line-height: 1.8;
+}
+
+.reviewer-step {
+  border-left: 4px solid #c39a45;
+}
+
+.reviewer-step.approved {
+  border-left-color: #31a17c;
+}
+
+.reviewer-step.rejected {
+  border-left-color: #c7654d;
+}
+
+.reviewer-step ul {
+  margin: 9px 0 0;
+  padding-left: 20px;
+  line-height: 1.7;
+}
+
+.executor-step {
+  border-left: 4px solid #78aabc;
 }
 
 .agent-memory-heading {
@@ -447,6 +519,10 @@ button.secondary:hover {
 
 .agent-memory-status.applied {
   color: #16705a;
+}
+
+.agent-memory-status.rejected {
+  color: #a13d27;
 }
 
 .agent-memory-item p {

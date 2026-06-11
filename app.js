@@ -8,6 +8,7 @@ let currentFilter = "all";
 let editingTaskId = null;
 let currentAgentSuggestion = null;
 let currentAgentMemoryId = null;
+let currentAgentReview = null;
 
 const countText = document.querySelector("#count");
 const messageText = document.querySelector("#message");
@@ -52,6 +53,9 @@ const agentObservation = document.querySelector("#agentObservation");
 const agentDecision = document.querySelector("#agentDecision");
 const agentPlan = document.querySelector("#agentPlan");
 const agentSuggestion = document.querySelector("#agentSuggestion");
+const reviewerStep = document.querySelector("#reviewerStep");
+const reviewerVerdict = document.querySelector("#reviewerVerdict");
+const reviewerChecks = document.querySelector("#reviewerChecks");
 const agentMemoryCount = document.querySelector("#agentMemoryCount");
 const agentMemoryMessage = document.querySelector("#agentMemoryMessage");
 const agentMemoryList = document.querySelector("#agentMemoryList");
@@ -120,7 +124,11 @@ function loadAgentMemory() {
         typeof memory.decision === "string" &&
         Array.isArray(memory.steps) &&
         typeof memory.suggestion === "string" &&
-        typeof memory.applied === "boolean"
+        typeof memory.applied === "boolean" &&
+        (
+          memory.reviewApproved === undefined ||
+          typeof memory.reviewApproved === "boolean"
+        )
       );
     });
   } catch (error) {
@@ -186,10 +194,16 @@ function renderAgentMemory() {
     dateText.textContent = formatAgentMemoryDate(memory.createdAt);
 
     const status = document.createElement("span");
-    status.className = memory.applied
-      ? "agent-memory-status applied"
-      : "agent-memory-status";
-    status.textContent = memory.applied ? "Uygulandi" : "Oneri bekliyor";
+    if (memory.reviewApproved === false) {
+      status.className = "agent-memory-status rejected";
+      status.textContent = "Denetleyici reddetti";
+    } else if (memory.applied) {
+      status.className = "agent-memory-status applied";
+      status.textContent = "Uygulandi";
+    } else {
+      status.className = "agent-memory-status";
+      status.textContent = "Kullanici onayi bekliyor";
+    }
 
     const observation = document.createElement("p");
     observation.textContent = `Gozlem: ${memory.observation}`;
@@ -202,8 +216,19 @@ function renderAgentMemory() {
     suggestionLabel.textContent = "Oneri: ";
     suggestion.append(suggestionLabel, memory.suggestion);
 
+    const review = document.createElement("p");
+    const reviewLabel = document.createElement("strong");
+    reviewLabel.textContent = "Denetim: ";
+    const reviewText =
+      memory.reviewApproved === undefined
+        ? "Eski kayit - denetim bilgisi yok"
+        : memory.reviewApproved
+          ? "Onaylandi"
+          : "Reddedildi";
+    review.append(reviewLabel, reviewText);
+
     meta.append(dateText, status);
-    listItem.append(meta, observation, decision, suggestion);
+    listItem.append(meta, observation, decision, review, suggestion);
     agentMemoryList.append(listItem);
   });
 }
@@ -592,9 +617,57 @@ function buildLocalAgentPlan() {
   };
 }
 
+function reviewLocalAgentPlan(plan) {
+  const checks = [];
+  let approved = true;
+
+  if (plan.steps.length === 3) {
+    checks.push("Plan uc acik adimdan olusuyor.");
+  } else {
+    checks.push("Planin adim sayisi uygun degil.");
+    approved = false;
+  }
+
+  if (
+    plan.suggestion.length >= 5 &&
+    plan.suggestion.length <= 160
+  ) {
+    checks.push("Oneri kisa ve uygulanabilir uzunlukta.");
+  } else {
+    checks.push("Onerinin uzunlugu uygulanabilir degil.");
+    approved = false;
+  }
+
+  const suggestionExists = tasks.some(function (task) {
+    return task.text.toLocaleLowerCase("tr-TR") ===
+      plan.suggestion.toLocaleLowerCase("tr-TR");
+  });
+
+  if (suggestionExists) {
+    checks.push("Ayni oneri gorev listesinde zaten bulunuyor.");
+    approved = false;
+  } else {
+    checks.push("Oneri gorev listesinde tekrar etmiyor.");
+  }
+
+  checks.push(
+    "Eylem yalnizca yeni gorev ekler; mevcut gorevleri silmez."
+  );
+
+  return {
+    approved,
+    checks,
+    verdict: approved
+      ? "Denetleyici plani onayladi."
+      : "Denetleyici plani reddetti; uygulayici calistirilmayacak.",
+  };
+}
+
 function showLocalAgentPlan() {
   const plan = buildLocalAgentPlan();
+  const review = reviewLocalAgentPlan(plan);
   currentAgentSuggestion = plan.suggestion;
+  currentAgentReview = review;
   currentAgentMemoryId = createAgentMemoryId();
 
   agentMemory.unshift({
@@ -604,6 +677,7 @@ function showLocalAgentPlan() {
     decision: plan.decision,
     steps: plan.steps,
     suggestion: plan.suggestion,
+    reviewApproved: review.approved,
     applied: false,
   });
 
@@ -618,6 +692,7 @@ function showLocalAgentPlan() {
   agentDecision.textContent = plan.decision;
   agentSuggestion.textContent = plan.suggestion;
   agentPlan.innerHTML = "";
+  reviewerChecks.innerHTML = "";
 
   plan.steps.forEach(function (step) {
     const listItem = document.createElement("li");
@@ -625,15 +700,33 @@ function showLocalAgentPlan() {
     agentPlan.append(listItem);
   });
 
+  reviewerVerdict.textContent = review.verdict;
+  reviewerStep.className = review.approved
+    ? "agent-step reviewer-step approved"
+    : "agent-step reviewer-step rejected";
+
+  review.checks.forEach(function (check) {
+    const listItem = document.createElement("li");
+    listItem.textContent = check;
+    reviewerChecks.append(listItem);
+  });
+
   agentResult.hidden = false;
-  addAgentSuggestionButton.disabled = false;
-  agentStatus.className = "api-status success";
-  agentStatus.textContent =
-    "Ajan plani hazir. Eylem ancak sizin onayinizla uygulanir.";
+  addAgentSuggestionButton.disabled = !review.approved;
+  agentStatus.className = review.approved
+    ? "api-status success"
+    : "api-status error";
+  agentStatus.textContent = review.approved
+    ? "Denetleyici onayladi. Uygulayici, kullanici onayini bekliyor."
+    : "Denetleyici reddetti. Tekrarlanan veya uygun olmayan eylem uygulanmaz.";
 }
 
 function addAgentSuggestionToTasks() {
-  if (currentAgentSuggestion === null) {
+  if (
+    currentAgentSuggestion === null ||
+    currentAgentReview === null ||
+    !currentAgentReview.approved
+  ) {
     return;
   }
 
@@ -671,14 +764,16 @@ function addAgentSuggestionToTasks() {
 
   agentStatus.className = "api-status success";
   agentStatus.textContent =
-    "Ajan onerisi kullanici onayiyla gorev listesine eklendi.";
+    "Uygulayici, denetleyici ve kullanici onayiyla gorevi ekledi.";
   currentAgentSuggestion = null;
+  currentAgentReview = null;
   addAgentSuggestionButton.disabled = true;
 }
 
 function clearAgentMemory() {
   agentMemory.length = 0;
   currentAgentMemoryId = null;
+  currentAgentReview = null;
   saveAgentMemory();
   renderAgentMemory();
   agentStatus.className = "api-status success";
