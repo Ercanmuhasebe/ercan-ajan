@@ -50,6 +50,50 @@ h1 {
   line-height: 1.7;
 }
 
+.greeting-box {
+  margin-bottom: 18px;
+  padding: 20px;
+  border: 1px solid #d8d2c7;
+  border-radius: 18px;
+  background: #faf8f4;
+}
+
+.greeting-box label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.input-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+}
+
+.greeting-message {
+  min-height: 24px;
+  margin: 14px 0 0;
+  color: #16705a;
+  font-weight: 650;
+}
+
+input {
+  width: 100%;
+  min-width: 0;
+  min-height: 52px;
+  padding: 0 16px;
+  border: 1px solid #b8b1a5;
+  border-radius: 14px;
+  background: white;
+  color: #18222c;
+  font: inherit;
+}
+
+input:focus {
+  border-color: #16705a;
+  outline: 3px solid rgba(22, 112, 90, 0.16);
+}
+
 .counter {
   display: flex;
   align-items: center;
@@ -109,6 +153,10 @@ button.secondary:hover {
   }
 
   .actions {
+    grid-template-columns: 1fr;
+  }
+
+  .input-row {
     grid-template-columns: 1fr;
   }
 }

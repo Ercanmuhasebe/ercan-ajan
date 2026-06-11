@@ -11,8 +11,24 @@
     <p class="eyebrow">YAZILIMA YENIDEN MERHABA</p>
     <h1>Ercan'in ilk modern uygulamasi</h1>
     <p class="intro">
-      Dugmeye her bastiginizda JavaScript bir olayi yakalar ve sayaci degistirir.
+      Adinizi yazin, uygulama sizi selamlasin. Sayac da kaldigi yerden devam etsin.
     </p>
+
+    <form id="greetingForm" class="greeting-box">
+      <label for="nameInput">Adiniz</label>
+      <div class="input-row">
+        <input
+          id="nameInput"
+          type="text"
+          placeholder="Ornek: Ercan"
+          autocomplete="name"
+        >
+        <button id="greetButton" type="submit">Selamla</button>
+      </div>
+      <p id="greetingMessage" class="greeting-message" aria-live="polite">
+        Adinizi yazip Selamla dugmesine basin.
+      </p>
+    </form>
 
     <section class="counter" aria-live="polite">
       <span>Toplam tiklama</span>
@@ -27,6 +43,6 @@
     <p id="message" class="message">Uygulama hazir.</p>
   </main>
 
-  <script src="app.js"></script>
+  <script src="app.js?v=3"></script>
 </body>
 </html>
