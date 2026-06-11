@@ -67,6 +67,25 @@ const pwaStatus = document.querySelector("#pwaStatus");
 const networkStatus = document.querySelector("#networkStatus");
 let deferredInstallPrompt = null;
 
+function isGitHubPagesHosting() {
+  return (
+    typeof window !== "undefined" &&
+    window.location.hostname.endsWith(".github.io")
+  );
+}
+
+function initializeHostingMode() {
+  if (!isGitHubPagesHosting()) {
+    return;
+  }
+
+  aiQuestion.disabled = true;
+  askAiButton.disabled = true;
+  aiStatus.className = "api-status";
+  aiStatus.textContent =
+    "OpenAI bolumu ucretsiz GitHub Pages yayininda kapali. Yerel ajan kullanilabilir.";
+}
+
 function showCount() {
   countText.textContent = count;
 }
@@ -946,4 +965,5 @@ installAppButton.addEventListener("click", installApplication);
 
 renderTasks();
 renderAgentMemory();
+initializeHostingMode();
 initializePwa();
