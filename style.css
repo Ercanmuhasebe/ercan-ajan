@@ -399,6 +399,65 @@ button.secondary:hover {
   line-height: 1.8;
 }
 
+.agent-memory-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 22px;
+}
+
+.agent-memory-heading h3 {
+  margin: 0 0 4px;
+  font-size: 1.1rem;
+}
+
+.agent-memory-heading span {
+  color: #737d86;
+  font-size: 0.82rem;
+}
+
+.agent-memory-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.agent-memory-item {
+  padding: 16px;
+  border-left: 4px solid #78aabc;
+  border-radius: 12px;
+  background: #f7fafb;
+}
+
+.agent-memory-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #66717b;
+  font-size: 0.78rem;
+}
+
+.agent-memory-status {
+  color: #9a5d24;
+  font-weight: 750;
+}
+
+.agent-memory-status.applied {
+  color: #16705a;
+}
+
+.agent-memory-item p {
+  margin: 9px 0 0;
+  line-height: 1.55;
+}
+
+.agent-memory-item strong {
+  color: #24576b;
+}
+
 .ai-box form > label {
   display: block;
   margin-bottom: 10px;
@@ -581,5 +640,11 @@ button:disabled {
 
   .agent-actions {
     grid-template-columns: 1fr;
+  }
+
+  .agent-memory-heading,
+  .agent-memory-meta {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }

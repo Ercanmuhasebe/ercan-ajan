@@ -1,10 +1,13 @@
 let count = 0;
 const storageKey = "ercan-gorev-listesi";
+const agentMemoryKey = "ercan-ajan-hafizasi";
 const tasks = loadTasks();
+const agentMemory = loadAgentMemory();
 let nextTaskId = getNextTaskId();
 let currentFilter = "all";
 let editingTaskId = null;
 let currentAgentSuggestion = null;
+let currentAgentMemoryId = null;
 
 const countText = document.querySelector("#count");
 const messageText = document.querySelector("#message");
@@ -49,6 +52,12 @@ const agentObservation = document.querySelector("#agentObservation");
 const agentDecision = document.querySelector("#agentDecision");
 const agentPlan = document.querySelector("#agentPlan");
 const agentSuggestion = document.querySelector("#agentSuggestion");
+const agentMemoryCount = document.querySelector("#agentMemoryCount");
+const agentMemoryMessage = document.querySelector("#agentMemoryMessage");
+const agentMemoryList = document.querySelector("#agentMemoryList");
+const clearAgentMemoryButton = document.querySelector(
+  "#clearAgentMemoryButton"
+);
 
 function showCount() {
   countText.textContent = count;
@@ -87,6 +96,116 @@ function saveTasks() {
   } catch (error) {
     return false;
   }
+}
+
+function loadAgentMemory() {
+  try {
+    const savedMemory = localStorage.getItem(agentMemoryKey);
+
+    if (savedMemory === null) {
+      return [];
+    }
+
+    const parsedMemory = JSON.parse(savedMemory);
+
+    if (!Array.isArray(parsedMemory)) {
+      return [];
+    }
+
+    return parsedMemory.filter(function (memory) {
+      return (
+        typeof memory.id === "number" &&
+        typeof memory.createdAt === "string" &&
+        typeof memory.observation === "string" &&
+        typeof memory.decision === "string" &&
+        Array.isArray(memory.steps) &&
+        typeof memory.suggestion === "string" &&
+        typeof memory.applied === "boolean"
+      );
+    });
+  } catch (error) {
+    return [];
+  }
+}
+
+function saveAgentMemory() {
+  try {
+    localStorage.setItem(agentMemoryKey, JSON.stringify(agentMemory));
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+function formatAgentMemoryDate(dateText) {
+  const date = new Date(dateText);
+
+  if (Number.isNaN(date.getTime())) {
+    return "Tarih bilinmiyor";
+  }
+
+  return date.toLocaleString("tr-TR", {
+    dateStyle: "short",
+    timeStyle: "short",
+  });
+}
+
+function createAgentMemoryId() {
+  let highestId = 0;
+
+  agentMemory.forEach(function (memory) {
+    if (memory.id > highestId) {
+      highestId = memory.id;
+    }
+  });
+
+  return Math.max(Date.now(), highestId + 1);
+}
+
+function renderAgentMemory() {
+  agentMemoryList.innerHTML = "";
+  agentMemoryCount.textContent = `${agentMemory.length} kayit`;
+  clearAgentMemoryButton.disabled = agentMemory.length === 0;
+
+  if (agentMemory.length === 0) {
+    agentMemoryMessage.textContent = "Henuz ajan hafizasi olusmadi.";
+    return;
+  }
+
+  agentMemoryMessage.textContent =
+    "Son 10 ajan karari tarayici hafizasinda saklaniyor.";
+
+  agentMemory.forEach(function (memory) {
+    const listItem = document.createElement("li");
+    listItem.className = "agent-memory-item";
+
+    const meta = document.createElement("div");
+    meta.className = "agent-memory-meta";
+
+    const dateText = document.createElement("span");
+    dateText.textContent = formatAgentMemoryDate(memory.createdAt);
+
+    const status = document.createElement("span");
+    status.className = memory.applied
+      ? "agent-memory-status applied"
+      : "agent-memory-status";
+    status.textContent = memory.applied ? "Uygulandi" : "Oneri bekliyor";
+
+    const observation = document.createElement("p");
+    observation.textContent = `Gozlem: ${memory.observation}`;
+
+    const decision = document.createElement("p");
+    decision.textContent = `Karar: ${memory.decision}`;
+
+    const suggestion = document.createElement("p");
+    const suggestionLabel = document.createElement("strong");
+    suggestionLabel.textContent = "Oneri: ";
+    suggestion.append(suggestionLabel, memory.suggestion);
+
+    meta.append(dateText, status);
+    listItem.append(meta, observation, decision, suggestion);
+    agentMemoryList.append(listItem);
+  });
 }
 
 function getNextTaskId() {
@@ -476,6 +595,24 @@ function buildLocalAgentPlan() {
 function showLocalAgentPlan() {
   const plan = buildLocalAgentPlan();
   currentAgentSuggestion = plan.suggestion;
+  currentAgentMemoryId = createAgentMemoryId();
+
+  agentMemory.unshift({
+    id: currentAgentMemoryId,
+    createdAt: new Date().toISOString(),
+    observation: plan.observation,
+    decision: plan.decision,
+    steps: plan.steps,
+    suggestion: plan.suggestion,
+    applied: false,
+  });
+
+  if (agentMemory.length > 10) {
+    agentMemory.length = 10;
+  }
+
+  saveAgentMemory();
+  renderAgentMemory();
 
   agentObservation.textContent = plan.observation;
   agentDecision.textContent = plan.decision;
@@ -522,11 +659,30 @@ function addAgentSuggestionToTasks() {
   currentFilter = "all";
   renderTasks();
 
+  const memoryRecord = agentMemory.find(function (memory) {
+    return memory.id === currentAgentMemoryId;
+  });
+
+  if (memoryRecord) {
+    memoryRecord.applied = true;
+    saveAgentMemory();
+    renderAgentMemory();
+  }
+
   agentStatus.className = "api-status success";
   agentStatus.textContent =
     "Ajan onerisi kullanici onayiyla gorev listesine eklendi.";
   currentAgentSuggestion = null;
   addAgentSuggestionButton.disabled = true;
+}
+
+function clearAgentMemory() {
+  agentMemory.length = 0;
+  currentAgentMemoryId = null;
+  saveAgentMemory();
+  renderAgentMemory();
+  agentStatus.className = "api-status success";
+  agentStatus.textContent = "Ajan hafizasi kullanici istegiyle temizlendi.";
 }
 
 increaseButton.addEventListener("click", function () {
@@ -607,5 +763,7 @@ addAgentSuggestionButton.addEventListener(
   "click",
   addAgentSuggestionToTasks
 );
+clearAgentMemoryButton.addEventListener("click", clearAgentMemory);
 
 renderTasks();
+renderAgentMemory();

@@ -183,8 +183,8 @@
     <section class="agent-box">
       <div class="section-heading">
         <div>
-          <p class="section-kicker">DERS 10</p>
-          <h2>Ucretsiz yerel ajan</h2>
+          <p class="section-kicker">DERS 11</p>
+          <h2>Hafizali yerel ajan</h2>
         </div>
         <span class="agent-badge">OFFLINE</span>
       </div>
@@ -230,9 +230,29 @@
           <p id="agentSuggestion"></p>
         </div>
       </article>
+
+      <div class="agent-memory-heading">
+        <div>
+          <h3>Ajan hafizasi</h3>
+          <span id="agentMemoryCount">0 kayit</span>
+        </div>
+        <button
+          id="clearAgentMemoryButton"
+          class="task-button delete"
+          type="button"
+          disabled
+        >
+          Hafizayi temizle
+        </button>
+      </div>
+
+      <p id="agentMemoryMessage" class="task-message">
+        Henuz ajan hafizasi olusmadi.
+      </p>
+      <ol id="agentMemoryList" class="agent-memory-list"></ol>
     </section>
   </main>
 
-  <script src="app.js?v=10"></script>
+  <script src="app.js?v=11"></script>
 </body>
 </html>
