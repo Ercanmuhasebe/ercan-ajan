@@ -95,8 +95,55 @@
 
       <ul id="taskList" class="task-list"></ul>
     </section>
+
+    <section class="api-box">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">DERS 8</p>
+          <h2>Internet API baglantisi</h2>
+        </div>
+        <span class="api-badge">JSON</span>
+      </div>
+
+      <p class="api-intro">
+        Open-Meteo servisinden Istanbul'un guncel hava verisini isteyin.
+      </p>
+
+      <button id="loadWeatherButton" type="button">
+        Hava durumunu getir
+      </button>
+
+      <p id="weatherStatus" class="api-status" aria-live="polite">
+        Veri istemek icin dugmeye basin.
+      </p>
+
+      <div id="weatherResult" class="weather-result" hidden>
+        <div class="weather-summary">
+          <span id="weatherDescription">-</span>
+          <strong id="weatherTemperature">-</strong>
+        </div>
+        <dl class="weather-details">
+          <div>
+            <dt>Hissedilen</dt>
+            <dd id="weatherFeelsLike">-</dd>
+          </div>
+          <div>
+            <dt>Nem</dt>
+            <dd id="weatherHumidity">-</dd>
+          </div>
+          <div>
+            <dt>Ruzgar</dt>
+            <dd id="weatherWind">-</dd>
+          </div>
+          <div>
+            <dt>Veri zamani</dt>
+            <dd id="weatherTime">-</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
   </main>
 
-  <script src="app.js?v=7"></script>
+  <script src="app.js?v=8"></script>
 </body>
 </html>

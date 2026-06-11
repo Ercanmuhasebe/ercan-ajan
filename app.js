@@ -20,6 +20,15 @@ const taskCount = document.querySelector("#taskCount");
 const allTasksFilter = document.querySelector("#allTasksFilter");
 const pendingTasksFilter = document.querySelector("#pendingTasksFilter");
 const completedTasksFilter = document.querySelector("#completedTasksFilter");
+const loadWeatherButton = document.querySelector("#loadWeatherButton");
+const weatherStatus = document.querySelector("#weatherStatus");
+const weatherResult = document.querySelector("#weatherResult");
+const weatherDescription = document.querySelector("#weatherDescription");
+const weatherTemperature = document.querySelector("#weatherTemperature");
+const weatherFeelsLike = document.querySelector("#weatherFeelsLike");
+const weatherHumidity = document.querySelector("#weatherHumidity");
+const weatherWind = document.querySelector("#weatherWind");
+const weatherTime = document.querySelector("#weatherTime");
 
 function showCount() {
   countText.textContent = count;
@@ -248,6 +257,91 @@ function changeFilter(filterName) {
   renderTasks();
 }
 
+function getWeatherDescription(weatherCode) {
+  const descriptions = {
+    0: "Acik",
+    1: "Genellikle acik",
+    2: "Parcali bulutlu",
+    3: "Kapali",
+    45: "Sisli",
+    48: "Kiragili sis",
+    51: "Hafif ciseleme",
+    53: "Ciseleme",
+    55: "Yogun ciseleme",
+    61: "Hafif yagmur",
+    63: "Yagmur",
+    65: "Kuvvetli yagmur",
+    71: "Hafif kar",
+    73: "Kar",
+    75: "Kuvvetli kar",
+    80: "Hafif saganak",
+    81: "Saganak",
+    82: "Kuvvetli saganak",
+    95: "Gok gurultulu firtina",
+  };
+
+  return descriptions[weatherCode] || `Hava kodu: ${weatherCode}`;
+}
+
+async function loadWeather() {
+  const apiUrl =
+    "https://api.open-meteo.com/v1/forecast" +
+    "?latitude=41.0082" +
+    "&longitude=28.9784" +
+    "&current=temperature_2m,apparent_temperature," +
+    "relative_humidity_2m,weather_code,wind_speed_10m" +
+    "&timezone=Europe%2FIstanbul";
+
+  loadWeatherButton.disabled = true;
+  weatherResult.hidden = true;
+  weatherStatus.className = "api-status";
+  weatherStatus.textContent = "API'den veri bekleniyor...";
+
+  try {
+    const response = await fetch(apiUrl);
+
+    if (!response.ok) {
+      throw new Error(`HTTP hatasi: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (
+      !data.current ||
+      typeof data.current.temperature_2m !== "number" ||
+      typeof data.current.weather_code !== "number"
+    ) {
+      throw new Error("API beklenen veri yapisini dondurmedi.");
+    }
+
+    const current = data.current;
+    const units = data.current_units || {};
+
+    weatherDescription.textContent = getWeatherDescription(
+      current.weather_code
+    );
+    weatherTemperature.textContent =
+      `${current.temperature_2m}${units.temperature_2m || "°C"}`;
+    weatherFeelsLike.textContent =
+      `${current.apparent_temperature}${units.apparent_temperature || "°C"}`;
+    weatherHumidity.textContent =
+      `${current.relative_humidity_2m}${units.relative_humidity_2m || "%"}`;
+    weatherWind.textContent =
+      `${current.wind_speed_10m} ${units.wind_speed_10m || "km/h"}`;
+    weatherTime.textContent = current.time;
+
+    weatherResult.hidden = false;
+    weatherStatus.className = "api-status success";
+    weatherStatus.textContent = "API verisi basariyla alindi.";
+  } catch (error) {
+    weatherStatus.className = "api-status error";
+    weatherStatus.textContent =
+      "Veri alinamadi. Internet baglantisini kontrol edip yeniden deneyin.";
+  } finally {
+    loadWeatherButton.disabled = false;
+  }
+}
+
 increaseButton.addEventListener("click", function () {
   count = count + 5;
   showCount();
@@ -312,5 +406,7 @@ pendingTasksFilter.addEventListener("click", function () {
 completedTasksFilter.addEventListener("click", function () {
   changeFilter("completed");
 });
+
+loadWeatherButton.addEventListener("click", loadWeather);
 
 renderTasks();
