@@ -1,6 +1,7 @@
 let count = 0;
-const tasks = [];
-let nextTaskId = 1;
+const storageKey = "ercan-gorev-listesi";
+const tasks = loadTasks();
+let nextTaskId = getNextTaskId();
 
 const countText = document.querySelector("#count");
 const messageText = document.querySelector("#message");
@@ -19,6 +20,53 @@ function showCount() {
   countText.textContent = count;
 }
 
+function loadTasks() {
+  try {
+    const savedTasks = localStorage.getItem(storageKey);
+
+    if (savedTasks === null) {
+      return [];
+    }
+
+    const parsedTasks = JSON.parse(savedTasks);
+
+    if (!Array.isArray(parsedTasks)) {
+      return [];
+    }
+
+    return parsedTasks.filter(function (task) {
+      return (
+        typeof task.id === "number" &&
+        typeof task.text === "string" &&
+        typeof task.completed === "boolean"
+      );
+    });
+  } catch (error) {
+    return [];
+  }
+}
+
+function saveTasks() {
+  try {
+    localStorage.setItem(storageKey, JSON.stringify(tasks));
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+function getNextTaskId() {
+  let highestId = 0;
+
+  tasks.forEach(function (task) {
+    if (task.id > highestId) {
+      highestId = task.id;
+    }
+  });
+
+  return highestId + 1;
+}
+
 function renderTasks() {
   taskList.innerHTML = "";
   const completedTaskCount = tasks.filter(function (task) {
@@ -32,7 +80,7 @@ function renderTasks() {
     return;
   }
 
-  taskMessage.textContent = "Gorevler dizi icinden donguyle ekrana yazildi.";
+  taskMessage.textContent = "Gorevler tarayici hafizasinda saklaniyor.";
 
   tasks.forEach(function (task, index) {
     const listItem = document.createElement("li");
@@ -62,6 +110,7 @@ function renderTasks() {
     completeButton.textContent = task.completed ? "Geri al" : "Tamamla";
     completeButton.addEventListener("click", function () {
       task.completed = !task.completed;
+      saveTasks();
       renderTasks();
     });
 
@@ -76,6 +125,7 @@ function renderTasks() {
 
       if (taskIndex !== -1) {
         tasks.splice(taskIndex, 1);
+        saveTasks();
         renderTasks();
       }
     });
@@ -130,9 +180,14 @@ taskForm.addEventListener("submit", function (event) {
 
   tasks.push(task);
   nextTaskId = nextTaskId + 1;
+  const saved = saveTasks();
   taskInput.value = "";
   taskInput.focus();
   renderTasks();
+
+  if (!saved) {
+    taskMessage.textContent = "Gorev eklendi fakat tarayiciya kaydedilemedi.";
+  }
 });
 
 renderTasks();
