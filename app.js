@@ -2,6 +2,8 @@ let count = 0;
 const storageKey = "ercan-gorev-listesi";
 const tasks = loadTasks();
 let nextTaskId = getNextTaskId();
+let currentFilter = "all";
+let editingTaskId = null;
 
 const countText = document.querySelector("#count");
 const messageText = document.querySelector("#message");
@@ -15,6 +17,9 @@ const taskInput = document.querySelector("#taskInput");
 const taskList = document.querySelector("#taskList");
 const taskMessage = document.querySelector("#taskMessage");
 const taskCount = document.querySelector("#taskCount");
+const allTasksFilter = document.querySelector("#allTasksFilter");
+const pendingTasksFilter = document.querySelector("#pendingTasksFilter");
+const completedTasksFilter = document.querySelector("#completedTasksFilter");
 
 function showCount() {
   countText.textContent = count;
@@ -67,22 +72,61 @@ function getNextTaskId() {
   return highestId + 1;
 }
 
+function getVisibleTasks() {
+  if (currentFilter === "pending") {
+    return tasks.filter(function (task) {
+      return !task.completed;
+    });
+  }
+
+  if (currentFilter === "completed") {
+    return tasks.filter(function (task) {
+      return task.completed;
+    });
+  }
+
+  return tasks;
+}
+
+function updateFilterButtons() {
+  const filters = [
+    { button: allTasksFilter, name: "all" },
+    { button: pendingTasksFilter, name: "pending" },
+    { button: completedTasksFilter, name: "completed" },
+  ];
+
+  filters.forEach(function (filter) {
+    const isActive = currentFilter === filter.name;
+    filter.button.className = isActive
+      ? "filter-button active"
+      : "filter-button";
+    filter.button.setAttribute("aria-pressed", String(isActive));
+  });
+}
+
 function renderTasks() {
   taskList.innerHTML = "";
+  const visibleTasks = getVisibleTasks();
   const completedTaskCount = tasks.filter(function (task) {
     return task.completed;
   }).length;
 
   taskCount.textContent = `${completedTaskCount}/${tasks.length} tamamlandi`;
+  updateFilterButtons();
 
   if (tasks.length === 0) {
     taskMessage.textContent = "Henuz gorev eklenmedi.";
     return;
   }
 
-  taskMessage.textContent = "Gorevler tarayici hafizasinda saklaniyor.";
+  if (visibleTasks.length === 0) {
+    taskMessage.textContent = "Bu filtreye uygun gorev bulunamadi.";
+    return;
+  }
 
-  tasks.forEach(function (task, index) {
+  taskMessage.textContent = `${visibleTasks.length} gorev gosteriliyor.`;
+
+  visibleTasks.forEach(function (task, index) {
     const listItem = document.createElement("li");
     listItem.className = task.completed ? "task-item completed" : "task-item";
 
@@ -93,16 +137,68 @@ function renderTasks() {
     const content = document.createElement("div");
     content.className = "task-content";
 
-    const taskText = document.createElement("span");
-    taskText.className = "task-text";
-    taskText.textContent = task.text;
-
     const status = document.createElement("span");
     status.className = "task-status";
     status.textContent = task.completed ? "Tamamlandi" : "Bekliyor";
 
     const buttons = document.createElement("div");
     buttons.className = "task-buttons";
+
+    if (editingTaskId === task.id) {
+      const editInput = document.createElement("input");
+      editInput.className = "task-edit-input";
+      editInput.type = "text";
+      editInput.value = task.text;
+
+      const editMessage = document.createElement("span");
+      editMessage.className = "task-edit-message";
+
+      const saveButton = document.createElement("button");
+      saveButton.type = "button";
+      saveButton.className = "task-button complete";
+      saveButton.textContent = "Kaydet";
+      saveButton.addEventListener("click", function () {
+        const editedText = editInput.value.trim();
+
+        if (editedText === "") {
+          editMessage.textContent = "Gorev metni bos olamaz.";
+          editInput.focus();
+          return;
+        }
+
+        task.text = editedText;
+        editingTaskId = null;
+        saveTasks();
+        renderTasks();
+      });
+
+      const cancelButton = document.createElement("button");
+      cancelButton.type = "button";
+      cancelButton.className = "task-button edit";
+      cancelButton.textContent = "Iptal";
+      cancelButton.addEventListener("click", function () {
+        editingTaskId = null;
+        renderTasks();
+      });
+
+      editInput.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          saveButton.click();
+        }
+      });
+
+      content.append(editInput, editMessage);
+      buttons.append(saveButton, cancelButton);
+      listItem.append(number, content, buttons);
+      taskList.append(listItem);
+      editInput.focus();
+      return;
+    }
+
+    const taskText = document.createElement("span");
+    taskText.className = "task-text";
+    taskText.textContent = task.text;
 
     const completeButton = document.createElement("button");
     completeButton.type = "button";
@@ -111,6 +207,15 @@ function renderTasks() {
     completeButton.addEventListener("click", function () {
       task.completed = !task.completed;
       saveTasks();
+      renderTasks();
+    });
+
+    const editButton = document.createElement("button");
+    editButton.type = "button";
+    editButton.className = "task-button edit";
+    editButton.textContent = "Duzenle";
+    editButton.addEventListener("click", function () {
+      editingTaskId = task.id;
       renderTasks();
     });
 
@@ -131,10 +236,16 @@ function renderTasks() {
     });
 
     content.append(taskText, status);
-    buttons.append(completeButton, deleteButton);
+    buttons.append(completeButton, editButton, deleteButton);
     listItem.append(number, content, buttons);
     taskList.append(listItem);
   });
+}
+
+function changeFilter(filterName) {
+  currentFilter = filterName;
+  editingTaskId = null;
+  renderTasks();
 }
 
 increaseButton.addEventListener("click", function () {
@@ -188,6 +299,18 @@ taskForm.addEventListener("submit", function (event) {
   if (!saved) {
     taskMessage.textContent = "Gorev eklendi fakat tarayiciya kaydedilemedi.";
   }
+});
+
+allTasksFilter.addEventListener("click", function () {
+  changeFilter("all");
+});
+
+pendingTasksFilter.addEventListener("click", function () {
+  changeFilter("pending");
+});
+
+completedTasksFilter.addEventListener("click", function () {
+  changeFilter("completed");
 });
 
 renderTasks();

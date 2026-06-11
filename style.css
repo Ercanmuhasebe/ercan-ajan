@@ -189,6 +189,33 @@ button.secondary:hover {
   color: #66717b;
 }
 
+.task-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.filter-button {
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid #d8d2c7;
+  border-radius: 999px;
+  background: #f5f2ec;
+  color: #53606c;
+  font-size: 0.82rem;
+}
+
+.filter-button:hover {
+  background: #e7e3db;
+}
+
+.filter-button.active {
+  border-color: #18222c;
+  background: #18222c;
+  color: white;
+}
+
 .task-list {
   display: grid;
   gap: 10px;
@@ -264,6 +291,15 @@ button.secondary:hover {
   background: #105944;
 }
 
+.task-button.edit {
+  background: #e4edf3;
+  color: #27546c;
+}
+
+.task-button.edit:hover {
+  background: #d2e1ea;
+}
+
 .task-button.delete {
   background: #efe5df;
   color: #9a3e25;
@@ -271,6 +307,16 @@ button.secondary:hover {
 
 .task-button.delete:hover {
   background: #e5d2c8;
+}
+
+.task-edit-input {
+  min-height: 40px;
+  padding: 0 12px;
+}
+
+.task-edit-message {
+  color: #9a3e25;
+  font-size: 0.8rem;
 }
 
 .visually-hidden {
@@ -310,5 +356,6 @@ button.secondary:hover {
   .task-buttons {
     width: 100%;
     padding-left: 44px;
+    flex-wrap: wrap;
   }
 }

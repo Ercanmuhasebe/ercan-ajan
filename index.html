@@ -45,7 +45,7 @@
     <section class="task-box">
       <div class="section-heading">
         <div>
-          <p class="section-kicker">DERS 6</p>
+          <p class="section-kicker">DERS 7</p>
           <h2>Gorev listesi</h2>
         </div>
         <span id="taskCount" class="task-count">0 gorev</span>
@@ -65,10 +65,38 @@
       <p id="taskMessage" class="task-message" aria-live="polite">
         Henuz gorev eklenmedi.
       </p>
+
+      <div class="task-filters" aria-label="Gorev filtreleri">
+        <button
+          id="allTasksFilter"
+          class="filter-button active"
+          type="button"
+          aria-pressed="true"
+        >
+          Tumu
+        </button>
+        <button
+          id="pendingTasksFilter"
+          class="filter-button"
+          type="button"
+          aria-pressed="false"
+        >
+          Bekleyenler
+        </button>
+        <button
+          id="completedTasksFilter"
+          class="filter-button"
+          type="button"
+          aria-pressed="false"
+        >
+          Tamamlananlar
+        </button>
+      </div>
+
       <ul id="taskList" class="task-list"></ul>
     </section>
   </main>
 
-  <script src="app.js?v=6"></script>
+  <script src="app.js?v=7"></script>
 </body>
 </html>
