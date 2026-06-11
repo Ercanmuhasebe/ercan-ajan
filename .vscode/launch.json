@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Ders 9 - AI sunucusunu baslat",
+      "name": "Uygulamayi baslat",
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "C:\\Users\\LENOVO\\Documents\\Codex\\tools\\node-v24.16.0-win-x64\\node.exe",

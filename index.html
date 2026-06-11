@@ -3,7 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ders 1 - Ilk Uygulamam</title>
+  <meta name="theme-color" content="#18222c">
+  <meta name="description" content="Ercan'in gorev ve yerel ajan uygulamasi">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Ercan Ajan">
+  <title>Ercan Ajan</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -13,6 +22,22 @@
     <p class="intro">
       Adinizi yazin, uygulama sizi selamlasin. Sayac da kaldigi yerden devam etsin.
     </p>
+
+    <section class="pwa-box">
+      <div>
+        <p class="section-kicker">DERS 13</p>
+        <h2>Mobil uygulama modu</h2>
+        <p id="pwaStatus">
+          Kurulum ve cevrimdisi destek kontrol ediliyor.
+        </p>
+      </div>
+      <div class="pwa-actions">
+        <span id="networkStatus" class="network-status">Cevrimici</span>
+        <button id="installAppButton" type="button" hidden>
+          Uygulamayi kur
+        </button>
+      </div>
+    </section>
 
     <form id="greetingForm" class="greeting-box">
       <label for="nameInput">Adiniz</label>
@@ -282,6 +307,6 @@
     </section>
   </main>
 
-  <script src="app.js?v=12"></script>
+  <script src="app.js?v=13"></script>
 </body>
 </html>

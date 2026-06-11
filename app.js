@@ -62,9 +62,92 @@ const agentMemoryList = document.querySelector("#agentMemoryList");
 const clearAgentMemoryButton = document.querySelector(
   "#clearAgentMemoryButton"
 );
+const installAppButton = document.querySelector("#installAppButton");
+const pwaStatus = document.querySelector("#pwaStatus");
+const networkStatus = document.querySelector("#networkStatus");
+let deferredInstallPrompt = null;
 
 function showCount() {
   countText.textContent = count;
+}
+
+function updateNetworkStatus() {
+  if (typeof navigator === "undefined") {
+    return;
+  }
+
+  const online = navigator.onLine;
+  networkStatus.textContent = online ? "Cevrimici" : "Cevrimdisi";
+  networkStatus.className = online
+    ? "network-status"
+    : "network-status offline";
+
+  if (!online) {
+    pwaStatus.textContent =
+      "Cevrimdisi mod: gorevler ve yerel ajan kullanilabilir.";
+  }
+}
+
+async function registerServiceWorker() {
+  if (
+    typeof navigator === "undefined" ||
+    !("serviceWorker" in navigator)
+  ) {
+    pwaStatus.textContent =
+      "Bu tarayici cevrimdisi uygulama destegi sunmuyor.";
+    return;
+  }
+
+  try {
+    await navigator.serviceWorker.register("./sw.js");
+    pwaStatus.textContent =
+      "Uygulama cevrimdisi kullanim icin hazir.";
+  } catch (error) {
+    pwaStatus.textContent =
+      "Cevrimdisi destek baslatilamadi. Uygulamayi F5 ile acin.";
+  }
+}
+
+async function installApplication() {
+  if (deferredInstallPrompt === null) {
+    return;
+  }
+
+  deferredInstallPrompt.prompt();
+  const choice = await deferredInstallPrompt.userChoice;
+  deferredInstallPrompt = null;
+  installAppButton.hidden = true;
+
+  pwaStatus.textContent =
+    choice.outcome === "accepted"
+      ? "Uygulama kurulumu baslatildi."
+      : "Kurulum simdilik ertelendi.";
+}
+
+function initializePwa() {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  updateNetworkStatus();
+  registerServiceWorker();
+
+  window.addEventListener("online", updateNetworkStatus);
+  window.addEventListener("offline", updateNetworkStatus);
+
+  window.addEventListener("beforeinstallprompt", function (event) {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    installAppButton.hidden = false;
+    pwaStatus.textContent =
+      "Uygulama bu cihaza kurulmaya hazir.";
+  });
+
+  window.addEventListener("appinstalled", function () {
+    deferredInstallPrompt = null;
+    installAppButton.hidden = true;
+    pwaStatus.textContent = "Uygulama cihaza kuruldu.";
+  });
 }
 
 function loadTasks() {
@@ -859,6 +942,8 @@ addAgentSuggestionButton.addEventListener(
   addAgentSuggestionToTasks
 );
 clearAgentMemoryButton.addEventListener("click", clearAgentMemory);
+installAppButton.addEventListener("click", installApplication);
 
 renderTasks();
 renderAgentMemory();
+initializePwa();
