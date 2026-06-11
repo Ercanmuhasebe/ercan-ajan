@@ -41,8 +41,34 @@
     </div>
 
     <p id="message" class="message">Uygulama hazir.</p>
+
+    <section class="task-box">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">DERS 4</p>
+          <h2>Gorev listesi</h2>
+        </div>
+        <span id="taskCount" class="task-count">0 gorev</span>
+      </div>
+
+      <form id="taskForm" class="input-row">
+        <label class="visually-hidden" for="taskInput">Yeni gorev</label>
+        <input
+          id="taskInput"
+          type="text"
+          placeholder="Ornek: Git tekrar yap"
+          autocomplete="off"
+        >
+        <button type="submit">Gorev ekle</button>
+      </form>
+
+      <p id="taskMessage" class="task-message" aria-live="polite">
+        Henuz gorev eklenmedi.
+      </p>
+      <ul id="taskList" class="task-list"></ul>
+    </section>
   </main>
 
-  <script src="app.js?v=3"></script>
+  <script src="app.js?v=4"></script>
 </body>
 </html>
