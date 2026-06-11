@@ -207,6 +207,11 @@ button.secondary:hover {
   background: white;
 }
 
+.task-item.completed {
+  border-color: #b9d7cf;
+  background: #f1f8f6;
+}
+
 .task-number {
   display: grid;
   flex: 0 0 32px;
@@ -216,6 +221,56 @@ button.secondary:hover {
   background: #18222c;
   color: #75d6bd;
   font-weight: 800;
+}
+
+.task-content {
+  display: grid;
+  flex: 1;
+  gap: 3px;
+  min-width: 0;
+}
+
+.task-text {
+  overflow-wrap: anywhere;
+}
+
+.task-status {
+  color: #737d86;
+  font-size: 0.8rem;
+}
+
+.task-item.completed .task-text {
+  color: #66717b;
+  text-decoration: line-through;
+}
+
+.task-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.task-button {
+  min-height: 38px;
+  padding: 0 12px;
+  border-radius: 10px;
+  font-size: 0.82rem;
+}
+
+.task-button.complete {
+  background: #16705a;
+}
+
+.task-button.complete:hover {
+  background: #105944;
+}
+
+.task-button.delete {
+  background: #efe5df;
+  color: #9a3e25;
+}
+
+.task-button.delete:hover {
+  background: #e5d2c8;
 }
 
 .visually-hidden {
@@ -245,5 +300,15 @@ button.secondary:hover {
 
   .section-heading {
     align-items: flex-start;
+  }
+
+  .task-item {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .task-buttons {
+    width: 100%;
+    padding-left: 44px;
   }
 }

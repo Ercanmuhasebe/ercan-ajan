@@ -1,5 +1,6 @@
 let count = 0;
 const tasks = [];
+let nextTaskId = 1;
 
 const countText = document.querySelector("#count");
 const messageText = document.querySelector("#message");
@@ -20,7 +21,11 @@ function showCount() {
 
 function renderTasks() {
   taskList.innerHTML = "";
-  taskCount.textContent = `${tasks.length} gorev`;
+  const completedTaskCount = tasks.filter(function (task) {
+    return task.completed;
+  }).length;
+
+  taskCount.textContent = `${completedTaskCount}/${tasks.length} tamamlandi`;
 
   if (tasks.length === 0) {
     taskMessage.textContent = "Henuz gorev eklenmedi.";
@@ -31,16 +36,53 @@ function renderTasks() {
 
   tasks.forEach(function (task, index) {
     const listItem = document.createElement("li");
-    listItem.className = "task-item";
+    listItem.className = task.completed ? "task-item completed" : "task-item";
 
     const number = document.createElement("span");
     number.className = "task-number";
     number.textContent = index + 1;
 
-    const taskText = document.createElement("span");
-    taskText.textContent = task;
+    const content = document.createElement("div");
+    content.className = "task-content";
 
-    listItem.append(number, taskText);
+    const taskText = document.createElement("span");
+    taskText.className = "task-text";
+    taskText.textContent = task.text;
+
+    const status = document.createElement("span");
+    status.className = "task-status";
+    status.textContent = task.completed ? "Tamamlandi" : "Bekliyor";
+
+    const buttons = document.createElement("div");
+    buttons.className = "task-buttons";
+
+    const completeButton = document.createElement("button");
+    completeButton.type = "button";
+    completeButton.className = "task-button complete";
+    completeButton.textContent = task.completed ? "Geri al" : "Tamamla";
+    completeButton.addEventListener("click", function () {
+      task.completed = !task.completed;
+      renderTasks();
+    });
+
+    const deleteButton = document.createElement("button");
+    deleteButton.type = "button";
+    deleteButton.className = "task-button delete";
+    deleteButton.textContent = "Sil";
+    deleteButton.addEventListener("click", function () {
+      const taskIndex = tasks.findIndex(function (savedTask) {
+        return savedTask.id === task.id;
+      });
+
+      if (taskIndex !== -1) {
+        tasks.splice(taskIndex, 1);
+        renderTasks();
+      }
+    });
+
+    content.append(taskText, status);
+    buttons.append(completeButton, deleteButton);
+    listItem.append(number, content, buttons);
     taskList.append(listItem);
   });
 }
@@ -80,7 +122,14 @@ taskForm.addEventListener("submit", function (event) {
     return;
   }
 
-  tasks.push(newTask);
+  const task = {
+    id: nextTaskId,
+    text: newTask,
+    completed: false,
+  };
+
+  tasks.push(task);
+  nextTaskId = nextTaskId + 1;
   taskInput.value = "";
   taskInput.focus();
   renderTasks();
