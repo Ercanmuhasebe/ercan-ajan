@@ -82,6 +82,32 @@ function isNativeApplication() {
   );
 }
 
+async function provideTaskHapticFeedback(completed) {
+  const haptics = isNativeApplication()
+    ? window.Capacitor?.Plugins?.Haptics
+    : null;
+
+  if (haptics) {
+    try {
+      if (completed) {
+        await haptics.notification({ type: "SUCCESS" });
+      } else {
+        await haptics.impact({ style: "LIGHT" });
+      }
+      return;
+    } catch (error) {
+      // Tarayici titresimi kullanilabiliyorsa asagidaki geri donuse gec.
+    }
+  }
+
+  if (
+    typeof navigator !== "undefined" &&
+    typeof navigator.vibrate === "function"
+  ) {
+    navigator.vibrate(completed ? 80 : 30);
+  }
+}
+
 function initializeHostingMode() {
   const nativeApplication = isNativeApplication();
 
@@ -499,9 +525,11 @@ function renderTasks() {
     completeButton.className = "task-button complete";
     completeButton.textContent = task.completed ? "Geri al" : "Tamamla";
     completeButton.addEventListener("click", function () {
-      task.completed = !task.completed;
+      const isCompleted = !task.completed;
+      task.completed = isCompleted;
       saveTasks();
       renderTasks();
+      provideTaskHapticFeedback(isCompleted);
     });
 
     const editButton = document.createElement("button");

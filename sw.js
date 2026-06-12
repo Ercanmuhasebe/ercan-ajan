@@ -1,9 +1,9 @@
-const cacheName = "ercan-ajan-v15";
+const cacheName = "ercan-ajan-v16";
 const appShell = [
   "./",
   "./index.html",
   "./style.css",
-  "./app.js?v=15",
+  "./app.js?v=16",
   "./manifest.webmanifest",
   "./assets/icon-192.png",
   "./assets/icon-512.png",
